@@ -4,5 +4,5 @@ import com.github.onsync.ecommerce.application.domain.User;
 
 public interface UpdateUserPort {
 
-    User update(User user);
+    User updateUser(User user);
 }

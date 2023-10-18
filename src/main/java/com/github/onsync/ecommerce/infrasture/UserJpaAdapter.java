@@ -32,7 +32,7 @@ public class UserJpaAdapter implements CreateUserPort, UpdateUserPort {
     }
 
     @Override
-    public User update(User user) {
+    public User updateUser(User user) {
 
         UserData reqUserData = infraModelMapper.map(user, UserData.class);
 

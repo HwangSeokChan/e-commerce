@@ -26,6 +26,6 @@ public class UserUseCaseHandler implements UserSignUpUseCase, UserUpdateUseCase 
     @Override
     public User updateAll(UpdateCommand command) {
         User newUser = appModelMapper.map(command, User.class);
-        return updateUserPort.update(newUser);
+        return updateUserPort.updateUser(newUser);
     }
 }

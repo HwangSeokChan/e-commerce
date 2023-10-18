@@ -55,7 +55,7 @@ public class UserUseCaseHandlerTest {
         final User.LoginInfo loginInfo = new User.LoginInfo("loginId", "password");
         final User.UserInfo userInfo = new User.UserInfo("username", "regNo");
         final UserUpdateUseCase.UpdateCommand command = new UserUpdateUseCase.UpdateCommand(userId, loginInfo, userInfo);
-        given(updateUserPort.update(any(User.class))).willAnswer(p -> p.getArgument(0));
+        given(updateUserPort.updateUser(any(User.class))).willAnswer(p -> p.getArgument(0));
         // when
         User updatedUser = useCaseHandler.updateAll(command);
         // then
@@ -63,6 +63,6 @@ public class UserUseCaseHandlerTest {
         Assertions.assertTrue(passwordEncoder.matches(command.getLoginInfo().getPassword(), updatedUser.getLoginInfo().getPassword()));
         Assertions.assertEquals(command.getUserInfo().getName(), updatedUser.getUserInfo().getName());
         Assertions.assertEquals(command.getUserInfo().getRegNo(), new String(aesBytesEncryptor.decrypt(HexUtils.fromHexString(updatedUser.getUserInfo().getRegNo()))));
-        then(updateUserPort).should().update(any(User.class));
+        then(updateUserPort).should().updateUser(any(User.class));
     }
 }
