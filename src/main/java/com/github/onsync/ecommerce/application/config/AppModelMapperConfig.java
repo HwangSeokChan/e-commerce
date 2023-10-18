@@ -2,6 +2,7 @@ package com.github.onsync.ecommerce.application.config;
 
 import com.github.onsync.ecommerce.application.domain.User;
 import com.github.onsync.ecommerce.application.inbound.UserSignUpUseCase;
+import com.github.onsync.ecommerce.application.inbound.UserUpdateUseCase;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.modelmapper.AbstractConverter;
@@ -27,6 +28,7 @@ public class AppModelMapperConfig {
     public ModelMapper appModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.addConverter(signUpCommand2User());
+        modelMapper.addConverter(userUpdateCommand2User());
         return modelMapper;
     }
 
@@ -42,6 +44,22 @@ public class AppModelMapperConfig {
                 final User.UserInfo userInfo = new User.UserInfo(source.getUserInfo().getName(), encryptedRegNo);
 
                 return new User(null, loginInfo, userInfo);
+            }
+        };
+    }
+
+    private Converter<UserUpdateUseCase.UpdateCommand, User> userUpdateCommand2User() {
+        return new AbstractConverter<>() {
+            @Override
+            protected User convert(UserUpdateUseCase.UpdateCommand source) {
+
+                final String encryptedPassword = passwordEncoder.encode(source.getLoginInfo().getPassword());
+                final User.LoginInfo loginInfo = new User.LoginInfo(source.getLoginInfo().getId(), encryptedPassword);
+
+                final String encryptedRegNo = HexUtils.toHexString(aesBytesEncryptor.encrypt(source.getUserInfo().getRegNo().getBytes(StandardCharsets.UTF_8)));
+                final User.UserInfo userInfo = new User.UserInfo(source.getUserInfo().getName(), encryptedRegNo);
+
+                return new User(source.getUserId(), loginInfo, userInfo);
             }
         };
     }
