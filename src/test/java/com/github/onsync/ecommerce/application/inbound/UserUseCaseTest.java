@@ -5,7 +5,6 @@ import com.github.onsync.ecommerce.application.outbound.CreateUserPort;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,8 +20,6 @@ public class UserUseCaseTest {
 
     @Autowired
     UserSignUpUseCase signUpUseCase;
-    @Autowired
-    ModelMapper modelMapper;
     @MockBean
     CreateUserPort createUserPort;
     @Autowired
