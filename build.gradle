@@ -90,7 +90,7 @@ jacocoTestReport {
         html.required = true
     }
     dependsOn test
-    // finalizedBy 'jacocoTestCoverageVerification' // `$$_hibernate_` 프록시 메소드 검증방법 검토후 적용
+    // finalizedBy 'jacocoTestCoverageVerification' // TODO : `$$_hibernate_` 프록시 메소드 검증방법 검토후 적용
 }
 
 jacocoTestCoverageVerification {
