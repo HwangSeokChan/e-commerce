@@ -4,14 +4,24 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
-@AllArgsConstructor
 @Getter
 public class User {
 
     UserId userId;
     LoginInfo loginInfo;
     UserInfo userInfo;
+    boolean usable;
 
+    public User(UserId userId, LoginInfo loginInfo, UserInfo userInfo) {
+        this.userId = userId;
+        this.loginInfo = loginInfo;
+        this.userInfo = userInfo;
+        this.usable = true;
+    }
+
+    public void resign() {
+        usable = false;
+    }
 
     @Value
     public static class LoginInfo {
