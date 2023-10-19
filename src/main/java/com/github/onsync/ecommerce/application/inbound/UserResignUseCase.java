@@ -3,13 +3,13 @@ package com.github.onsync.ecommerce.application.inbound;
 import com.github.onsync.ecommerce.application.domain.User;
 import lombok.Value;
 
-public interface UserSignUpUseCase {
+public interface UserResignUseCase {
 
-    User signUp(UserSignUpUseCase.SignUpCommand command);
+    User resign(ResignCommand command);
 
     @Value
-    class SignUpCommand implements UserCommand {
+    class ResignCommand implements UserCommand {
+        User.UserId userId;
         User.LoginInfo loginInfo;
-        User.UserInfo userInfo;
     }
 }

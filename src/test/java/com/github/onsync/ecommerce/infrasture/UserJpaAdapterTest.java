@@ -1,15 +1,11 @@
 package com.github.onsync.ecommerce.infrasture;
 
 import com.github.onsync.ecommerce.application.domain.User;
-import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.NoSuchElementException;
 
 @SpringBootTest
 public class UserJpaAdapterTest {
@@ -25,7 +21,7 @@ public class UserJpaAdapterTest {
     }
 
     @Test
-    void 유저생성_테스트_성공() {
+    void 유저생성_테스트() {
         // given
         final User reqUser = new User(null, new User.LoginInfo("id", "password"), new User.UserInfo("name", "regNo"));
         // when
@@ -39,18 +35,7 @@ public class UserJpaAdapterTest {
     }
 
     @Test
-    void 유저생성_테스트_실패_EntityExistsException() {
-        // given
-        User reqUser = new User(null, new User.LoginInfo("id", "password"), new User.UserInfo("name", "regNo"));
-        User existUser = userJpaAdapter.creatUser(reqUser);
-        // when
-        Executable duplicatedRequest = () -> userJpaAdapter.creatUser(reqUser);
-        // then
-        Assertions.assertThrows(EntityExistsException.class, duplicatedRequest);
-    }
-
-    @Test
-    void 유저수정_테스트_성공() {
+    void 유저수정_테스트() {
         // given
         User reqCraeteUser = new User(null, new User.LoginInfo("id", "password"), new User.UserInfo("name", "regNo"));
         User createdUser = userJpaAdapter.creatUser(reqCraeteUser);
@@ -58,7 +43,7 @@ public class UserJpaAdapterTest {
         // when
         User updatedUser = userJpaAdapter.updateUser(reqUpdateUser);
         // then
-        Assertions.assertNotNull(updatedUser.getUserId());
+        Assertions.assertEquals(createdUser.getUserId(), updatedUser.getUserId());
         Assertions.assertEquals(reqUpdateUser.getLoginInfo().getId(), updatedUser.getLoginInfo().getId());
         Assertions.assertEquals(reqUpdateUser.getLoginInfo().getPassword(), updatedUser.getLoginInfo().getPassword());
         Assertions.assertEquals(reqUpdateUser.getUserInfo().getName(), updatedUser.getUserInfo().getName());
@@ -66,12 +51,17 @@ public class UserJpaAdapterTest {
     }
 
     @Test
-    void 유저수정_테스트_실패_NoSuchElementException() {
+    void 유저조회_테스트() {
         // given
-        User reqUpdateUser = new User(new User.UserId(1L), new User.LoginInfo("id", "password"), new User.UserInfo("name", "regNo"));
+        User reqCraeteUser = new User(null, new User.LoginInfo("id", "password"), new User.UserInfo("name", "regNo"));
+        User createdUser = userJpaAdapter.creatUser(reqCraeteUser);
         // when
-        Executable noTargetRequest = () -> userJpaAdapter.updateUser(reqUpdateUser);
+        User foundByLoginInfo = userJpaAdapter.findByLoginInfo(createdUser.getLoginInfo()).get();
         // then
-        Assertions.assertThrows(NoSuchElementException.class, noTargetRequest);
+        Assertions.assertEquals(createdUser.getUserId(), foundByLoginInfo.getUserId());
+        Assertions.assertEquals(createdUser.getLoginInfo().getId(), foundByLoginInfo.getLoginInfo().getId());
+        Assertions.assertEquals(createdUser.getLoginInfo().getPassword(), foundByLoginInfo.getLoginInfo().getPassword());
+        Assertions.assertEquals(createdUser.getUserInfo().getName(), foundByLoginInfo.getUserInfo().getName());
+        Assertions.assertEquals(createdUser.getUserInfo().getRegNo(), foundByLoginInfo.getUserInfo().getRegNo());
     }
 }

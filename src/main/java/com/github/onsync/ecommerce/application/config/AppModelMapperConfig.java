@@ -1,6 +1,7 @@
 package com.github.onsync.ecommerce.application.config;
 
 import com.github.onsync.ecommerce.application.domain.User;
+import com.github.onsync.ecommerce.application.inbound.UserResignUseCase;
 import com.github.onsync.ecommerce.application.inbound.UserSignUpUseCase;
 import com.github.onsync.ecommerce.application.inbound.UserUpdateUseCase;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class AppModelMapperConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.addConverter(signUpCommand2User());
         modelMapper.addConverter(userUpdateCommand2User());
+        modelMapper.addConverter(userResignCommand2User());
         return modelMapper;
     }
 
@@ -60,6 +62,19 @@ public class AppModelMapperConfig {
                 final User.UserInfo userInfo = new User.UserInfo(source.getUserInfo().getName(), encryptedRegNo);
 
                 return new User(source.getUserId(), loginInfo, userInfo);
+            }
+        };
+    }
+
+    private Converter<UserResignUseCase.ResignCommand, User> userResignCommand2User() {
+        return new AbstractConverter<>() {
+            @Override
+            protected User convert(UserResignUseCase.ResignCommand source) {
+
+                final String encryptedPassword = passwordEncoder.encode(source.getLoginInfo().getPassword());
+                final User.LoginInfo loginInfo = new User.LoginInfo(source.getLoginInfo().getId(), encryptedPassword);
+
+                return new User(source.getUserId(), loginInfo, null);
             }
         };
     }

@@ -9,7 +9,7 @@ public interface UserUpdateUseCase {
     User updateAll(UpdateCommand command);
 
     @Value
-    class UpdateCommand {
+    class UpdateCommand implements UserCommand {
         User.UserId userId;
         User.LoginInfo loginInfo;
         User.UserInfo userInfo;
