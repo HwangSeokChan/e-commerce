@@ -4,12 +4,12 @@ import com.github.onsync.ecommerce.application.domain.User;
 import com.github.onsync.ecommerce.application.outbound.CreateUserPort;
 import com.github.onsync.ecommerce.application.outbound.LoadUserPort;
 import com.github.onsync.ecommerce.application.outbound.UpdateUserPort;
-import jakarta.persistence.EntityExistsException;
+import com.github.onsync.ecommerce.infrasture.jpa.UserData;
+import com.github.onsync.ecommerce.infrasture.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Component
@@ -43,8 +43,8 @@ public class UserJpaAdapter implements CreateUserPort, UpdateUserPort, LoadUserP
     }
 
     @Override
-    public Optional<User> findByLoginInfo(User.LoginInfo loginInfo) {
-        return userJpaRepository.findByLoginId(loginInfo.getId())
+    public Optional<User> findByLoginId(String loginId) {
+        return userJpaRepository.findByLoginId(loginId)
                 .map(data -> infraModelMapper.map(data, User.class));
     }
 }

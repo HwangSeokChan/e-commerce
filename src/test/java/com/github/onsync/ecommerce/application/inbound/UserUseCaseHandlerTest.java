@@ -12,6 +12,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -47,7 +48,7 @@ public class UserUseCaseHandlerTest {
         final User.UserInfo userInfo = new User.UserInfo("username", "regNo");
         final UserSignUpUseCase.SignUpCommand command = new UserSignUpUseCase.SignUpCommand(loginInfo, userInfo);
         final User expectedUser = new User(null, loginInfo, userInfo);
-        given(loadUserPort.findByLoginInfo(any(User.LoginInfo.class))).willReturn(Optional.of(expectedUser));
+        given(loadUserPort.findByLoginId(any(String.class))).willReturn(Optional.of(expectedUser));
         given(createUserPort.creatUser(any(User.class))).willAnswer(p -> p.getArgument(0));
         // when
         User newUser = useCaseHandler.signUp(command);
@@ -65,7 +66,7 @@ public class UserUseCaseHandlerTest {
         final User.LoginInfo loginInfo = new User.LoginInfo("loginId", "password");
         final User.UserInfo userInfo = new User.UserInfo("username", "regNo");
         final UserSignUpUseCase.SignUpCommand command = new UserSignUpUseCase.SignUpCommand(loginInfo, userInfo);
-        given(loadUserPort.findByLoginInfo(any(User.LoginInfo.class))).willReturn(Optional.empty());
+        given(loadUserPort.findByLoginId(any(String.class))).willReturn(Optional.empty());
         given(createUserPort.creatUser(any(User.class))).willAnswer(p -> p.getArgument(0));
         // when
         Executable executeSingUp = () -> useCaseHandler.signUp(command);
@@ -116,7 +117,7 @@ public class UserUseCaseHandlerTest {
         final User.LoginInfo loginInfo = new User.LoginInfo("loginId", "password");
         final UserResignUseCase.ResignCommand command = new UserResignUseCase.ResignCommand(userId, loginInfo);
         final User expectedUser = new User(userId, loginInfo, null);
-        given(loadUserPort.findByLoginInfo(any(User.LoginInfo.class))).willReturn(Optional.of(expectedUser));
+        given(loadUserPort.findByLoginId(any(String.class))).willReturn(Optional.of(expectedUser));
         given(updateUserPort.updateUser(any(User.class))).willAnswer(p -> p.getArgument(0));
         // when
         User updatedUser = useCaseHandler.resign(command);
@@ -124,7 +125,7 @@ public class UserUseCaseHandlerTest {
         Assertions.assertEquals(command.getUserId().getValue(), updatedUser.getUserId().getValue());
         Assertions.assertEquals(command.getLoginInfo().getId(), updatedUser.getLoginInfo().getId());
         Assertions.assertTrue(passwordEncoder.matches(command.getLoginInfo().getPassword(), updatedUser.getLoginInfo().getPassword()));
-        then(loadUserPort).should(only()).findByLoginInfo(any(User.LoginInfo.class));
+        then(loadUserPort).should(only()).findByLoginId(any(String.class));
         then(updateUserPort).should(only()).updateUser(any(User.class));
     }
 
@@ -134,7 +135,7 @@ public class UserUseCaseHandlerTest {
         final User.UserId userId = new User.UserId(1L);
         final User.LoginInfo loginInfo = new User.LoginInfo("loginId", "password");
         final UserResignUseCase.ResignCommand command = new UserResignUseCase.ResignCommand(userId, loginInfo);
-        given(loadUserPort.findByLoginInfo(any(User.LoginInfo.class))).willReturn(Optional.empty());
+        given(loadUserPort.findByLoginId(any(String.class))).willReturn(Optional.empty());
         given(updateUserPort.updateUser(any(User.class))).willAnswer(p -> p.getArgument(0));
         // when
         Executable executeResign = () -> useCaseHandler.resign(command);

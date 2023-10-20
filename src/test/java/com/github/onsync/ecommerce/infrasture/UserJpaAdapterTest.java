@@ -1,6 +1,7 @@
 package com.github.onsync.ecommerce.infrasture;
 
 import com.github.onsync.ecommerce.application.domain.User;
+import com.github.onsync.ecommerce.infrasture.jpa.UserJpaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,7 @@ public class UserJpaAdapterTest {
         User reqCraeteUser = new User(null, new User.LoginInfo("id", "password"), new User.UserInfo("name", "regNo"));
         User createdUser = userJpaAdapter.creatUser(reqCraeteUser);
         // when
-        User foundByLoginInfo = userJpaAdapter.findByLoginInfo(createdUser.getLoginInfo()).get();
+        User foundByLoginInfo = userJpaAdapter.findByLoginId(createdUser.getLoginInfo().getId()).get();
         // then
         Assertions.assertEquals(createdUser.getUserId(), foundByLoginInfo.getUserId());
         Assertions.assertEquals(createdUser.getLoginInfo().getId(), foundByLoginInfo.getLoginInfo().getId());
