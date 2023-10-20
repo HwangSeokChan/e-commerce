@@ -1,4 +1,4 @@
-package com.github.onsync.ecommerce.infrasture;
+package com.github.onsync.ecommerce.infrasture.jpa;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

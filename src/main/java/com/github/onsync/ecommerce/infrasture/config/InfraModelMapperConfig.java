@@ -1,7 +1,7 @@
 package com.github.onsync.ecommerce.infrasture.config;
 
 import com.github.onsync.ecommerce.application.domain.User;
-import com.github.onsync.ecommerce.infrasture.UserData;
+import com.github.onsync.ecommerce.infrasture.jpa.UserData;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;

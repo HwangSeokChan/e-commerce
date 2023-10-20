@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface LoadUserPort {
 
     Optional<User> findByUserId(User.UserId userId);
-    Optional<User> findByLoginInfo(User.LoginInfo loginInfo);
+    Optional<User> findByLoginId(String loginId);
 }

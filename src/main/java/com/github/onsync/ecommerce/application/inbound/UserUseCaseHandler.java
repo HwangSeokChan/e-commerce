@@ -7,16 +7,21 @@ import com.github.onsync.ecommerce.application.outbound.UpdateUserPort;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Transactional
-public class UserUseCaseHandler implements UserSignUpUseCase, UserUpdateUseCase, UserResignUseCase {
+public class UserUseCaseHandler implements UserSignUpUseCase, UserUpdateUseCase, UserResignUseCase, UserDetailsService {
 
     private final ModelMapper appModelMapper;
     private final UpdateUserPort updateUserPort;
@@ -29,7 +34,7 @@ public class UserUseCaseHandler implements UserSignUpUseCase, UserUpdateUseCase,
     public User signUp(SignUpCommand command) {
         User newUser = appModelMapper.map(command, User.class);
 
-        loadUserPort.findByLoginInfo(newUser.getLoginInfo())
+        loadUserPort.findByLoginId(newUser.getLoginInfo().getId())
                 .orElseThrow(EntityExistsException::new);
 
         return createUserPort.creatUser(newUser);
@@ -51,7 +56,7 @@ public class UserUseCaseHandler implements UserSignUpUseCase, UserUpdateUseCase,
 
         String rawPassword = resignTargetUser.getLoginInfo().getPassword();
 
-        loadUserPort.findByLoginInfo(resignTargetUser.getLoginInfo())
+        loadUserPort.findByLoginId(resignTargetUser.getLoginInfo().getId())
                 .map(user -> passwordEncoder.matches(rawPassword, user.getLoginInfo().getPassword()))
                 .orElseThrow(NoSuchElementException::new);
 
@@ -62,5 +67,16 @@ public class UserUseCaseHandler implements UserSignUpUseCase, UserUpdateUseCase,
 
     private User parseToUser(UserCommand command) {
         return appModelMapper.map(command, User.class);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        return loadUserPort.findByLoginId(username)
+                .map(user -> new org.springframework.security.core.userdetails.User(
+                        user.getLoginInfo().getId(),
+                        user.getLoginInfo().getPassword(),
+                        new ArrayList<>()))
+                .orElseThrow(NoSuchElementException::new);
     }
 }
